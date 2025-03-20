@@ -1,3 +1,5 @@
+> The following repo has been adapted from [Prodigy: Towards Unsupervised Anomaly Detection in Production HPC Systems](https://dl.acm.org/doi/10.1145/3581784.3607076) in order to be used for Praxium. This included upgrading from Python 3.6 to 3.9, as well as migrating to PyTorch from Tensorflow. The only difference in usage is that features extracted via `tsfresh` that require `matrixprofile` are not functioning, due to `matrixprofile`'s lack of upkeep.
+
 # Prodigy
 
 This repository contains the code for [Prodigy: Towards Unsupervised Anomaly Detection in Production HPC Systems](https://dl.acm.org/doi/10.1145/3581784.3607076).
