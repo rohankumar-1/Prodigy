@@ -1,5 +1,4 @@
 import logging
-import json
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -9,7 +8,6 @@ from tsfresh import extract_features
 from tsfresh.utilities.dataframe_functions import roll_time_series
 from tsfresh.feature_extraction.settings import MinimalFCParameters, EfficientFCParameters
 from tsfresh.feature_extraction import settings
-import time
  
 class DataPipeline():
     
