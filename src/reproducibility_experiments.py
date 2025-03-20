@@ -14,8 +14,8 @@ from sklearn.metrics import classification_report
 from tsfresh.feature_extraction import settings
 from sklearn.model_selection import train_test_split
 
-from data_pipeline import DataPipeline
-from vae import VAE
+from .data_pipeline import DataPipeline
+from .vae import VAE
 
 
 def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, output_dir, verbose=False):
@@ -147,7 +147,7 @@ def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, 
             if extract_pre_selected_features:
                 x_train_fe = pipeline.tsfresh_generate_features(x_train, fe_config=None, kind_to_fc_parameters=fe_selected_features)
             else:
-                x_train_fe = pipeline.tsfresh_generate_features(x_train, fe_config="minimal")
+                x_train_fe = pipeline.tsfresh_generate_features(x_train, fe_config="efficient")
 
             if y_train is not None:
                 y_train = y_train.loc[x_train_fe.index]
@@ -159,7 +159,7 @@ def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, 
                 if extract_pre_selected_features:
                     x_test_fe = pipeline.tsfresh_generate_features(x_test, fe_config=None, kind_to_fc_parameters=fe_selected_features)
                 else:
-                    x_test_fe = pipeline.tsfresh_generate_features(x_test, fe_config="minimal")
+                    x_test_fe = pipeline.tsfresh_generate_features(x_test, fe_config="efficient")
 
                 if y_test is not None:
                     y_test = y_test.loc[x_test_fe.index]
@@ -203,15 +203,16 @@ def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, 
                 latent_dim=latent_dim,
                 learning_rate=1e-4
             )
+            
+            # print(f"Dataframe values shape: {x_train_scaled.values.shape}")
 
             # Train the VAE model
-            vae.fit(
+            vae.train_model(
                 x_train=x_train_scaled,
                 epochs=1000,
                 batch_size=32,
-                validation_split=0.1,
                 save_dir=output_dir,
-                verbose=0
+                verbose=False
             )
             
             logging.info("Model training is completed")
@@ -259,13 +260,14 @@ def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, 
 
 if __name__ == '__main__':
     
-    repeat_nums = [0, 1, 2, 3, 4 ]
-    expConfig_nums = [0, 1, 2, 3, 4, 5]
-    data_dir = "/home/cc/prodigy_artifacts/"
+    repeat_nums = [0]
+    expConfig_nums = [0, 1, 2]
+    data_dir = "../"
     #If this parameter is set, it will use the previously determined parameters, if it's None, it's going to extract features
-    pre_selected_features_filename = "/home/cc/prodigy_artifacts/fe_eclipse_tsfresh_raw_CHI_2000.json"    
-    output_dir = "/home/cc/prodigy_ae_output"
-    verbose = True  # Set to True to display important logging INFO messages, otherwise it will print all logging messages
+    pre_selected_features_filename = None # "../fe_eclipse_tsfresh_raw_CHI_2000.json"    
+    
+    output_dir = "../prodigy_ae_output"
+    verbose = False  # Set to True to display important logging INFO messages, otherwise it will print all logging messages
     main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, output_dir, verbose)
     
     logging.info("Script is completed")

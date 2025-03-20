@@ -87,20 +87,20 @@ def main(results_dir, plot_output_dir):
     ax.set_xlabel("Num. Healthy Samples in Training Data", size=plot_params['x_label_font'])
     ax.tick_params(axis='x', labelsize=plot_params['x_ticks_font'], rotation=0)
     ax.tick_params(axis='y', labelsize=plot_params['y_ticks_font'])
-    ax.set_ylim([0.40, 1.01])
+    ax.set_ylim([0, 1.01])
 
     fig.suptitle("", fontsize=plot_params['fig_title_size'], y=1.1)
     plt.tight_layout()
     plt.savefig(Path(plot_output_dir) / "prodigy_increasing_num_samples_results.pdf", bbox_inches='tight')
     if verbose: 
         print("Saved the plot")
-    plt.show()
+    # plt.show()
     
 
 if __name__ == '__main__':
 
-    results_dir = "/home/cc/prodigy_ae_output/results" 
-    plot_output_dir = "/home/cc/prodigy_ae_output/plots"
+    results_dir = "../prodigy_ae_output/results" 
+    plot_output_dir = "../prodigy_ae_output/plots"
     verbose = True
 
     if not os.path.exists(plot_output_dir):
