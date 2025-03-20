@@ -9,7 +9,7 @@ from tsfresh import extract_features
 from tsfresh.utilities.dataframe_functions import roll_time_series
 from tsfresh.feature_extraction.settings import MinimalFCParameters, EfficientFCParameters
 from tsfresh.feature_extraction import settings
-
+import time
  
 class DataPipeline():
     
@@ -28,10 +28,12 @@ class DataPipeline():
         self.window_size = 0
         self.dataset_name = kwargs.get('system_name', 'eclipse')                
         self.x_train_filename = kwargs.get('x_train_filename', 'prod_train_data.hdf') 
+        # self.x_train_filename = kwargs.get('x_train_filename', 'prod_train_data.csv') 
         self.y_train_filename = kwargs.get('y_train_filename', 'prod_train_label.csv') 
         self.x_val_filename = kwargs.get('x_val_filename', 'prod_val_data.hdf') 
         self.y_val_filename = kwargs.get('y_val_filename', 'prod_val_label.csv')         
-        self.x_test_filename = kwargs.get('x_test_filename', 'prod_test_data.hdf')  
+        self.x_test_filename = kwargs.get('x_test_filename', 'prod_test_data.hdf') 
+        # self.x_test_filename = kwargs.get('x_test_filename', 'prod_test_data.csv')   
         self.y_test_filename = kwargs.get('y_test_filename', 'prod_test_label.csv')  
 
         self.raw_features = None        
@@ -51,7 +53,7 @@ class DataPipeline():
         """        
         
         data_dir = Path(data_dir) 
-        
+        print(data_dir)
         x_train = self._read_data(data_dir / self.x_train_filename)
         y_train = self._read_label(data_dir / self.y_train_filename) if self.y_train_filename is not None else None
         
@@ -142,7 +144,14 @@ class DataPipeline():
                 raise ValueError(f"Invalid value {param_value} for parameter {param_name}. Allowed values: {allowed_values[param_name]}")
     
     
-    def tsfresh_generate_features(self, data, fe_config, kind_to_fc_parameters=None, column_id="uid", column_sort="timestamp"):
+    def tsfresh_generate_features(self, 
+                                  data, 
+                                  fe_config, 
+                                  kind_to_fc_parameters=None, 
+                                  column_id="uid", 
+                                  column_sort="timestamp",
+                                  n_jobs=1
+                                 ):
         """
         Extracts features from data using tsfresh library.
 
@@ -176,8 +185,9 @@ class DataPipeline():
             data.reset_index(inplace=True)
          
         #Create a unique id column since job_id and component_id combo is the unique one
-        data['uid'] = data['job_id'].astype(str) + '_' + data['component_id'].astype(str)
-        data.drop(columns=['job_id','component_id'],inplace=True)
+        data.loc[:, 'uid'] = data['job_id'].astype(str) + '_' + data['component_id'].astype(str)
+        data = data.drop(columns=['job_id', 'component_id'])
+        
         
         if kind_to_fc_parameters is None:
             self.logger.info("TSFRESH will use default_fc_parameters")
@@ -186,6 +196,8 @@ class DataPipeline():
                 column_id=column_id,
                 column_sort=column_sort,
                 default_fc_parameters=EfficientFCParameters() if fe_config == 'efficient' else MinimalFCParameters(),
+                disable_progressbar=True,
+                n_jobs=n_jobs
             )
         else:
             self.logger.info("TSFRESH will use kind_to_fc_parameters")
@@ -194,23 +206,29 @@ class DataPipeline():
                 column_id=column_id,
                 column_sort=column_sort,
                 kind_to_fc_parameters=kind_to_fc_parameters,
-            )            
-                                
-        data_fe.reset_index(inplace=True)
+                disable_progressbar=True,
+                n_jobs=n_jobs
+            )                   
+        
+        data_fe = data_fe.reset_index().copy()
         data_fe[['job_id', 'component_id']] = data_fe['index'].str.split('_', expand=True)
-        data_fe.drop(columns=['index'], inplace=True)
+        
+        data_fe[['job_id', 'component_id']] = data_fe[['job_id', 'component_id']].apply(lambda x : pd.to_numeric(x), axis=0)
+#         data_fe[['job_id', 'component_id']] = pd.to_numeric(data_fe[['job_id', 'component_id']])
+        data_fe = data_fe.drop(columns=['index'])
         
         if self.window_size == 0 :
             data_fe.set_index(["job_id", "component_id"],inplace=True)
         else:
             data_fe.set_index(["job_id", "component_id", "timestamp"],inplace=True)
         
-        self.logger.info(f'Feature extraction: Before dropping NaNs: {data_fe.shape}')
+        self.logger.info(f'Feature extraction: Before imputing NaNs: {data_fe.shape}')
         data_fe = data_fe.dropna(axis=1, how='any')    
-        self.logger.info(f'Feature extraction: Dropped NaNs: {data_fe.shape}') 
+        self.logger.info(f'Feature extraction: imputed NaNs: {data_fe.shape}') 
                 
         self.raw_features = list(data_fe.columns)
         self.fe_features = settings.from_columns(self.raw_features)
+        data_fe = data_fe.reindex(sorted(data_fe.columns), axis=1)
         
         return data_fe
     
@@ -255,6 +273,7 @@ class DataPipeline():
         
         try:
             data = pd.read_hdf(abs_input_path)
+            # data = pd.read_csv(abs_input_path)
         except FileNotFoundError:
             self.logger.error(f"File not found!: {abs_input_path}")
             return None
