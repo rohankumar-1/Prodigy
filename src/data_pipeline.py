@@ -221,6 +221,7 @@ class DataPipeline():
             data_fe.set_index(["job_id", "component_id", "timestamp"],inplace=True)
         
         self.logger.info(f'Feature extraction: Before imputing NaNs: {data_fe.shape}')
+        data_fe = data_fe.replace([np.inf, -np.inf], np.nan)
         data_fe = data_fe.dropna(axis=1, how='any')    
         self.logger.info(f'Feature extraction: imputed NaNs: {data_fe.shape}') 
                 
