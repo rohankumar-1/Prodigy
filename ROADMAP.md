@@ -8,3 +8,7 @@ To accomplish this, I started writing `clean_features.ipynb`, with the goal to r
 
 There are some other parts that I have not yet tested fully, such as loading data in the data pipeline or creating windows. 
 
+
+
+Rohan Kumar
+
