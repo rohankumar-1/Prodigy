@@ -14,8 +14,8 @@ from sklearn.metrics import classification_report
 from tsfresh.feature_extraction import settings
 from sklearn.model_selection import train_test_split
 
-from .data_pipeline import DataPipeline
-from .vae import VAE
+from data_pipeline import DataPipeline
+from vae import VAE
 
 
 def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, output_dir, verbose=False):
@@ -264,7 +264,7 @@ if __name__ == '__main__':
     expConfig_nums = [0, 1, 2]
     data_dir = "../"
     #If this parameter is set, it will use the previously determined parameters, if it's None, it's going to extract features
-    pre_selected_features_filename = None # "../fe_eclipse_tsfresh_raw_CHI_2000.json"    
+    pre_selected_features_filename = "../fe_eclipse_tsfresh_raw_CHI_2000.json"    
     
     output_dir = "../prodigy_ae_output"
     verbose = False  # Set to True to display important logging INFO messages, otherwise it will print all logging messages
