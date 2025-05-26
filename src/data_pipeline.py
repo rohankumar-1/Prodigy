@@ -213,7 +213,7 @@ class DataPipeline():
         data_fe = data_fe.reset_index().copy()
         data_fe[['job_id', 'component_id']] = data_fe['index'].str.split('_', expand=True)
         
-        data_fe[['job_id', 'component_id']] = data_fe[['job_id', 'component_id']].apply(lambda x : pd.to_numeric(x), axis=0)
+        # data_fe[['job_id', 'component_id']] = data_fe[['job_id', 'component_id']].apply(lambda x : pd.to_numeric(x), axis=0)
 #         data_fe[['job_id', 'component_id']] = pd.to_numeric(data_fe[['job_id', 'component_id']])
         data_fe = data_fe.drop(columns=['index'])
         

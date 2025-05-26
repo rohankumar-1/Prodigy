@@ -51,7 +51,8 @@ def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, 
             if pre_selected_features_filename is not None:
                 with open(pre_selected_features_filename, "r") as fp:
                     selected_features_json = json.load(fp)
-                fe_selected_features = selected_features_json['tsfresh_column_names']
+                # fe_selected_features = selected_features_json['tsfresh_column_names']
+                fe_selected_features = selected_features_json
                 logging.info("The previously selected features will be used")
 
             # Set healthy_test_data_percentage based on expConfig_num
@@ -149,6 +150,8 @@ def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, 
             else:
                 x_train_fe = pipeline.tsfresh_generate_features(x_train, fe_config="efficient")
 
+            # print(x_train_fe.index)
+            # print(y_train.index)
             if y_train is not None:
                 y_train = y_train.loc[x_train_fe.index]
 
@@ -264,7 +267,7 @@ if __name__ == '__main__':
     expConfig_nums = [0, 1, 2]
     data_dir = "../"
     #If this parameter is set, it will use the previously determined parameters, if it's None, it's going to extract features
-    pre_selected_features_filename = "../fe_eclipse_tsfresh_raw_CHI_2000.json"    
+    pre_selected_features_filename = "../fe_eclipse_tsfresh_raw_CHI_2000_clean.json"    
     
     output_dir = "../prodigy_ae_output"
     verbose = False  # Set to True to display important logging INFO messages, otherwise it will print all logging messages
