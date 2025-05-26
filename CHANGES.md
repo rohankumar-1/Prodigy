@@ -30,3 +30,10 @@
     - another possible reason is my adjustment to `reparameterize()` in `vae.py`, where I reduce the randomness injected into the VAE to stabilize the results (which was useful in Praxium)
 
 - full experiment (10 trials as outlined in Prodigy README) ran in 2565.07s (around 30 minutes) on my MacBook (M3 Pro)
+
+
+
+NEED TO CHECK REQUIREMENT FILE FOR FUNCTIONING, ASK EFE ABOUT:
+- ai4hpc_predict.py file and where imported functions come from
+- reproducibility results
+- need a branch to put a MR to in original repo

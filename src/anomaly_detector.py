@@ -1,11 +1,9 @@
 import logging
 from pathlib import Path
 import joblib
-import pandas as pd
 import json
 import os
 import torch
-import numpy as np
 
 from .vae import VAE  # Updated to use PyTorch-based VAE
 from .data_pipeline import DataPipeline
@@ -34,11 +32,11 @@ class AnomalyDetector():
         self.threshold = deployment_metadata['threshold']    
         self.fe_column_names = deployment_metadata['fe_column_names']
         self.raw_column_names = deployment_metadata['raw_column_names']        
-        self.logger.info(f"Feature extraction columns are loaded")
+        self.logger.info("Feature extraction columns are loaded")
 
         self.loaded_scaler = joblib.load(Path(self.model_dir) / self.scaler_filename)
         if self.verbose:
-            self.logger.info(f"Scaler is loaded")
+            self.logger.info("Scaler is loaded")
             self.logger.info(f"The anomaly detection threshold is {self.threshold}")
         
     def _build_prepare_model(self, input_dim):
@@ -59,7 +57,7 @@ class AnomalyDetector():
         self.model.threshold = self.threshold
         
         if self.verbose:
-            self.logger.info(f"Built the model and loaded the weights")
+            self.logger.info("Built the model and loaded the weights")
         
     def prediction_pipeline(self, input_ts):
         

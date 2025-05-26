@@ -1,15 +1,10 @@
 import logging
 import sys
-# logging.basicConfig(format='%(asctime)s %(levelname)-7s %(message)s',
-#                     stream=sys.stderr, level=logging.INFO)
 from pathlib import Path
 import pandas as pd
-import joblib
 import json
 
 import os
-import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
 from tsfresh.feature_extraction import settings
 from sklearn.model_selection import train_test_split

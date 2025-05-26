@@ -1,15 +1,13 @@
-import os, sys
+
 import pandas as pd
-import numpy as np
 
 import joblib
 from pathlib import Path
 import json
-import sys, os
 from tensorflow.keras.models import load_model
 
 #Custom module imports
-from ai4hpc_deployment.src.utils import transform_dsos_data, tsfresh_extract_features, scale_data, predict_vae
+from src.utils import transform_dsos_data, tsfresh_extract_features, scale_data, predict_vae
  
 class AI4HPCPredict():
     
@@ -39,7 +37,7 @@ class AI4HPCPredict():
         self.loaded_model = load_model(model_folder_path / model_name, compile=False)
         print(self.loaded_model.summary())      
         
-        print(f"Model prep is completed")
+        print("Model prep is completed")
         
     def predict_pipeline(self, meminfo_df, vmstat_df, procstat_df):
         
