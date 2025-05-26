@@ -39,7 +39,7 @@ class VAE(nn.Module):
     def reparameterize(self, z_mean, z_log_var):
         std = torch.exp(0.5 * z_log_var)
         eps = torch.randn_like(std)
-        return z_mean + eps * std * 0.25
+        return z_mean + eps * std * 0.25 # FROM ROHAN: I adjusted this by adding a 0.25 scale factor to decrease randomness for Praxium, this helped with stability
     
     
     def decode(self, z):
@@ -83,31 +83,24 @@ class VAE(nn.Module):
         model_path = os.path.join(save_dir, self.name + ".pt")
         torch.save(self.state_dict(), model_path)
     
-        self.determine_classification_threshold(x_train.to_numpy())
+        self.determine_classification_threshold(x_train)
     
     
-    def calculate_reconstruction_error(self, data):
+    def calculate_reconstruction_error(self, data: pd.DataFrame):
+        """ calculates reconstruction error using Mean Absolute Error (MAE) """
         self.eval()
         with torch.no_grad():
-            x = torch.tensor(data, dtype=torch.float32)
+            x = torch.tensor(data.to_numpy(), dtype=torch.float32)
             x_decoded, _, _ = self(x)
             return torch.mean(torch.abs(x - x_decoded), dim=1).numpy()
-    
-    
-    def determine_classification_threshold(self, x_train):
+
+
+    def determine_classification_threshold(self, x_train: pd.DataFrame):
         mae_train = self.calculate_reconstruction_error(x_train)
         self.threshold_max = np.max(mae_train)
         self.threshold = np.percentile(mae_train, 99)
         self.threshold_90 = np.percentile(mae_train, 90)
         
-        
-    def get_recon_error(self, data):
-        self.eval()
-        with torch.no_grad():
-            data = torch.tensor(data, dtype=torch.float32)
-            recon_data = self(data)[0]
-            return torch.abs(data - recon_data).numpy()
-    
     
     def predict_anomaly(self, data):
         mae_data = self.calculate_reconstruction_error(data)

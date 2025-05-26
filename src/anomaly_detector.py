@@ -60,17 +60,6 @@ class AnomalyDetector():
         
         if self.verbose:
             self.logger.info(f"Built the model and loaded the weights")
-                                    
-    # def calculate_reconstruction_error(self, data):
-        
-    #     data_tensor = torch.tensor(data.values, dtype=torch.float32)
-    #     recon_data, _, _ = self.model(data_tensor)
-    #     return np.mean(np.abs(data - recon_data.detach().numpy()), axis=1)
-    # def _predict_anomaly(self, data):
-    #     mae_data = self.model.calculate_reconstruction_error(data)
-    #     # mae_data = self.calculate_reconstruction_error(data)
-    #     pred = [1 if curr_mae > self.threshold else 0 for curr_mae in mae_data]
-    #     return pred[0] if len(pred) == 1 else pred
         
     def prediction_pipeline(self, input_ts):
         

@@ -10,7 +10,6 @@ warnings.filterwarnings('ignore', category=yaml.YAMLLoadWarning)
 pd.set_option('mode.chained_assignment', None)
 
 
-
 def convert_str_time_to_unix(str_time):
     
     curr_format = '%Y-%m-%d %H:%M:%S.%f'

@@ -150,8 +150,6 @@ def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, 
             else:
                 x_train_fe = pipeline.tsfresh_generate_features(x_train, fe_config="efficient")
 
-            # print(x_train_fe.index)
-            # print(y_train.index)
             if y_train is not None:
                 y_train = y_train.loc[x_train_fe.index]
 
@@ -263,8 +261,8 @@ def main(repeat_nums, expConfig_nums, data_dir, pre_selected_features_filename, 
 
 if __name__ == '__main__':
     
-    repeat_nums = [0]
-    expConfig_nums = [0, 1, 2]
+    repeat_nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    expConfig_nums = [0, 1, 2, 3, 4, 5]
     data_dir = "../"
     #If this parameter is set, it will use the previously determined parameters, if it's None, it's going to extract features
     pre_selected_features_filename = "../fe_eclipse_tsfresh_raw_CHI_2000_clean.json"    

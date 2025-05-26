@@ -91,7 +91,7 @@ def main(results_dir, plot_output_dir):
 
     fig.suptitle("", fontsize=plot_params['fig_title_size'], y=1.1)
     plt.tight_layout()
-    plt.savefig(Path(plot_output_dir) / "prodigy_increasing_num_samples_results.pdf", bbox_inches='tight')
+    plt.savefig(Path(plot_output_dir) / "prodigy_increasing_num_samples_results.png", bbox_inches='tight')
     if verbose: 
         print("Saved the plot")
     # plt.show()
